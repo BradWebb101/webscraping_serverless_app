@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Python script into the container
-COPY scrape.py .
+COPY parser_and_validator.py .
 
 # Set the command to run the Python script
-CMD ["python", "scrape.py"]
+CMD ["python", "parser_and_validator.py"]

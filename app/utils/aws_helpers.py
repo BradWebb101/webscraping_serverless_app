@@ -38,13 +38,13 @@ class S3():
 
 class sqs_que():
 
-    def __init__(self, que_arn:str):
-        self.que_arn = que_arn
+    def __init__(self, que_url:str):
+        self.que_url = que_url
         self.sqs_client = boto3.client('sqs')
 
     def send_to_que(self, error_message, key):
         response = self.sqs_client.send_message(
-        QueueUrl=queue_url,
+        QueueUrl=self.que_url,
         MessageBody=(
             {'date':datetime.now(),
              'error_message':error_message,

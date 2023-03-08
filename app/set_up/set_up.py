@@ -17,9 +17,9 @@ schema = {
 
 
 
-object = {
-    'website' = 'reddit'
-    'site_ratio' = 0.8,
-    'schema' = {},
-    'html_tags' = []
+object_1 = {
+    'website':'reddit',
+    'site_ratio':0.8,
+    'schema':{},
+    'html_tags':[]
 }

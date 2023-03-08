@@ -1,21 +1,31 @@
-// Import the necessary DynamoDB classes
-import { Table, AttributeType, BillingMode } from 'aws-cdk-lib/aws-dynamodb';
-import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
-import { Stack, StackProps } from 'aws-cdk-lib';
+import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as iam from 'aws-cdk-lib/aws-iam'
 
-export class DynamoDbStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
+export class DynamoStack extends Construct {
+  constructor(scope: Construct, id: string, props?: any) {
+    super(scope, id);
 
-    // Create a new DynamoDB table
-    const table = new Table(this, 'my-table', {
-      partitionKey: { name: 'website', type: AttributeType.STRING },
-      sortKey: { name: 'validation_type', type: AttributeType.NUMBER },
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      stream: StreamViewType.NEW_AND_OLD_IMAGES,
+    const { projectName } = props
+    const lambdaFunctionARN = cdk.Fn.importValue('LambdaFunctionARN');
+
+    // Create the DynamoDB table
+    const table = new dynamodb.Table(this, `${projectName}Table`, {
+      tableName : `${projectName}-table`,
+      partitionKey: { name: 'item', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST, 
     });
 
-    
-  }
-}
+    table.grantFullAccess(new iam.ArnPrincipal(lambdaFunctionARN))
+
+    new cdk.CfnOutput(this, 'TableARN', {
+      value: table.tableArn,
+      exportName: 'DynamoTableARN'
+    });
+
+    new cdk.CfnOutput(this, 'TableName', {
+      value: table.tableName,
+      exportName: 'DynamoTableName'
+    });
+  }}
